@@ -37,11 +37,15 @@
                         <TextBox x:Name="NameInput" Margin="0,2,0,5"/>
 
                         <TextBlock Text="Vanus:"/>
-                        <TextBox x:Name="AgeInput" Margin="0,2,0,5"/>
+                        <TextBox x:Name="AgeInput" Margin="0,2,0,0"
+                            PreviewTextInput="AgeInput_PreviewTextInput"
+                            TextChanged="AgeInput_TextChanged"/>
+                        <TextBlock x:Name="AgeError"
+                            Foreground="Red" FontSize="11" Margin="0,2,0,5"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
-                        <Button Content="Lisa loom" Click="AddAnimal_Click" Width="100" Margin="5,0"/>
+                        <Button Content="Lisa loom" x:Name="AddBtn" Click="AddAnimal_Click" Width="100" Margin="5,0"/>
                         <Button Content="Eemalda loom" Click="RemoveAnimal_Click" Width="110" Margin="5,0"/>
                     </StackPanel>
                 </StackPanel>

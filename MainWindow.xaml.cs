@@ -1,16 +1,11 @@
 ﻿using CrazyZoo.entity;
 using CrazyZoo.interfaces;
 using System.Collections.ObjectModel;
-using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace CrazyZoo
 {
@@ -56,11 +51,24 @@ namespace CrazyZoo
             }
         }
 
+        private void AgeInput_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !Regex.IsMatch(e.Text, "^[0-9]+$");
+        }
+
         private void AddAnimal_Click(object sender, RoutedEventArgs e)
         {
+            if (!int.TryParse(AgeInput.Text, out int age) || age < 0)
+            {
+                MessageBox.Show("Palun sisesta korrektne vanus (0 või rohkem).", "Viga", MessageBoxButton.OK, MessageBoxImage.Warning);
+                AgeInput.BorderBrush = Brushes.Red;
+                return;
+            }
+
+            AgeInput.BorderBrush = SystemColors.ControlDarkBrush;
+
             string type = (TypeCombo.SelectedItem as System.Windows.Controls.ComboBoxItem)?.Content.ToString();
             string name = string.IsNullOrWhiteSpace(NameInput.Text) ? "Nimetu" : NameInput.Text;
-            int age = int.TryParse(AgeInput.Text, out int parsed) ? parsed : 1;
 
             Animal newAnimal = type switch
             {
@@ -98,6 +106,8 @@ namespace CrazyZoo
             if (AnimalList.SelectedItem is Animal selected && !string.IsNullOrWhiteSpace(FoodInput.Text))
                 Log($"{selected.Name} sõi {FoodInput.Text}.");
         }
+
+        private void AgeInput_TextChanged(object sender, TextChangedEventArgs e){}
 
         private void CrazyAction_Click(object sender, RoutedEventArgs e)
         {
