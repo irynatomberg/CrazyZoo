@@ -31,6 +31,9 @@
                             <ComboBoxItem Content="Kass"/>
                             <ComboBoxItem Content="Koer"/>
                             <ComboBoxItem Content="Lind"/>
+                            <ComboBoxItem Content="Hobune"/>
+                            <ComboBoxItem Content="Ahv"/>
+                            <ComboBoxItem Content="Rebane"/>
                         </ComboBox>
 
                         <TextBlock Text="Nimi:"/>

@@ -26,6 +26,9 @@ namespace CrazyZoo
             animals.Add(new Cat { Name = "Muri", Age = 3 });
             animals.Add(new Dog { Name = "Pontu", Age = 5 });
             animals.Add(new Bird { Name = "Tibu", Age = 1 });
+            animals.Add(new Monkey { Name = "Karu", Age = 4 });
+            animals.Add(new Fox { Name = "Rebane", Age = 2 });
+            animals.Add(new Horse { Name = "Torm", Age = 6 });
         }
 
         public static void Log(string message)
@@ -75,6 +78,9 @@ namespace CrazyZoo
                 "Kass" => new Cat { Name = name, Age = age },
                 "Koer" => new Dog { Name = name, Age = age },
                 "Lind" => new Bird { Name = name, Age = age },
+                "Ahv" => new Monkey { Name = name, Age = age },
+                "Rebane" => new Fox { Name = name, Age = age },
+                "Hobune" => new Horse { Name = name, Age = age },
                 _ => new Cat { Name = name, Age = age }
             };
 
