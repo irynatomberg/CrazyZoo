@@ -1,0 +1,15 @@
+﻿using CrazyZoo.interfaces;
+using System;
+
+namespace CrazyZoo.entity
+{
+    public class Horse : Animal, ICrazyAction
+    {
+        public override string MakeSound() => "Ihahaa!";
+
+        public void ActCrazy()
+        {
+            Console.WriteLine($"{Name} galoppis hullumeelselt ringi!");
+        }
+    }
+}
