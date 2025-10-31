@@ -3,13 +3,28 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:CrazyZoo"
+        xmlns:infra="clr-namespace:CrazyZoo.infrastructure"
+        xmlns:resx="clr-namespace:CrazyZoo.resources"
+        xmlns:entity="clr-namespace:CrazyZoo.entity"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="Loomade maailm" Height="550" Width="800">
+        Title="{x:Static resx:Strings.AppTitle}" Height="700" Width="1000">
+
+    <Window.Resources>
+        <infra:AnimalTypeConverter x:Key="AnimalTypeConverter"/>
+        <ObjectDataProvider x:Key="AnimalTypes"
+                        MethodName="GetValues"
+                        ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="entity:AnimalType"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Window.Resources>
+
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -17,66 +32,87 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <GroupBox Header="Loomad" Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Margin="5">
+        <GroupBox Header="{x:Static resx:Strings.AnimalsHeader}" Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Margin="5">
             <StackPanel>
-                <ListBox x:Name="AnimalList" Height="230" DisplayMemberPath="Name"
-                         SelectionChanged="AnimalList_SelectionChanged"/>
+                <ListBox ItemsSource="{Binding Animals}"
+                         SelectedItem="{Binding Selected, Mode=TwoWay}"
+                         DisplayMemberPath="Name"
+                         Height="230"/>
 
                 <StackPanel Margin="0,5,0,0">
-                    <TextBlock Text="Uue looma lisamine:" FontWeight="Bold" Margin="0,5,0,5"/>
+                    <TextBlock Text="{x:Static resx:Strings.AddNewAnimal}" FontWeight="Bold" Margin="0,5,0,5"/>
 
                     <StackPanel Orientation="Vertical" Margin="0,0,0,5">
-                        <TextBlock Text="Liik:"/>
-                        <ComboBox x:Name="TypeCombo" SelectedIndex="0" Margin="0,2,0,5">
-                            <ComboBoxItem Content="Kass"/>
-                            <ComboBoxItem Content="Koer"/>
-                            <ComboBoxItem Content="Lind"/>
-                            <ComboBoxItem Content="Hobune"/>
-                            <ComboBoxItem Content="Ahv"/>
-                            <ComboBoxItem Content="Rebane"/>
-                        </ComboBox>
+                        <TextBlock Text="{x:Static resx:Strings.Species}"/>
+                        <ComboBox ItemsSource="{Binding Source={StaticResource AnimalTypes}}"
+                                  SelectedValue="{Binding NewType, Mode=TwoWay}"
+                                  Width="150"/>
 
-                        <TextBlock Text="Nimi:"/>
-                        <TextBox x:Name="NameInput" Margin="0,2,0,5"/>
 
-                        <TextBlock Text="Vanus:"/>
-                        <TextBox x:Name="AgeInput" Margin="0,2,0,0"
-                            PreviewTextInput="AgeInput_PreviewTextInput"
-                            TextChanged="AgeInput_TextChanged"/>
-                        <TextBlock x:Name="AgeError"
-                            Foreground="Red" FontSize="11" Margin="0,2,0,5"/>
+                        <TextBlock Text="{x:Static resx:Strings.Name}"/>
+                        <TextBox Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,0,5"/>
+
+                        <TextBlock Text="{x:Static resx:Strings.Age}"/>
+                        <TextBox Text="{Binding NewAge, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,0,0"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
-                        <Button Content="Lisa loom" x:Name="AddBtn" Click="AddAnimal_Click" Width="100" Margin="5,0"/>
-                        <Button Content="Eemalda loom" Click="RemoveAnimal_Click" Width="110" Margin="5,0"/>
+                        <Button Content="{x:Static resx:Strings.AddAnimal}" Command="{Binding AddAnimalCommand}" Width="100" Margin="5,0"/>
+                        <Button Content="{x:Static resx:Strings.RemoveAnimal}" Command="{Binding RemoveSelectedCommand}" Width="110" Margin="5,0"/>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>
         </GroupBox>
 
-        <GroupBox Header="Detailid" Grid.Column="1" Grid.Row="0" Margin="5">
+        <GroupBox Header="{x:Static resx:Strings.DetailsHeader}" Grid.Column="1" Grid.Row="0" Margin="5">
             <StackPanel>
-                <TextBlock Text="Nimi:" FontWeight="Bold"/>
-                <TextBlock x:Name="NameText"/>
-                <TextBlock Text="Vanus:" FontWeight="Bold" Margin="0,5,0,0"/>
-                <TextBlock x:Name="AgeText"/>
+                <TextBlock Text="{x:Static resx:Strings.Species}" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Selected, Converter={StaticResource AnimalTypeConverter}}"/>
+
+                <TextBlock Text="{x:Static resx:Strings.Name}" FontWeight="Bold" Margin="0,5,0,0"/>
+                <TextBlock Text="{Binding Selected.Name}"/>
+
+                <TextBlock Text="{x:Static resx:Strings.Age}" FontWeight="Bold" Margin="0,5,0,0"/>
+                <TextBlock Text="{Binding Selected.Age}"/>
             </StackPanel>
         </GroupBox>
 
         <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="5">
-            <Button Content="Tee hääl" Click="MakeSound_Click" Width="90" Margin="5"/>
+            <Button Content="{x:Static resx:Strings.SoundButton}" Command="{Binding MakeSoundCommand}" Width="90" Margin="5"/>
             <StackPanel Orientation="Vertical" Margin="5,0">
-                <TextBlock Text="Toit:"/>
-                <TextBox x:Name="FoodInput" Width="120"/>
+                <TextBlock Text="{x:Static resx:Strings.Food}"/>
+                <TextBox Width="140" Text="{Binding Food, UpdateSourceTrigger=PropertyChanged}"/>
             </StackPanel>
-            <Button Content="Toida" Click="Feed_Click" Width="90" Margin="5"/>
-            <Button Content="Hullu tegu" Click="CrazyAction_Click" Width="100" Margin="5"/>
+            <Button Content="{x:Static resx:Strings.FeedButton}" Command="{Binding FeedSelectedCommand}" Width="90" Margin="5"/>
+            <Button Content="{x:Static resx:Strings.CrazyButton}" Command="{Binding CrazyActionCommand}" Width="100" Margin="5"/>
+            <Button Content="{x:Static resx:Strings.DropFoodButton}" Command="{Binding DropFoodToAllCommand}" Width="160" Margin="5"/>
         </StackPanel>
 
-        <GroupBox Header="Logi" Grid.Column="1" Grid.Row="2" Margin="5">
-            <TextBox x:Name="LogBox" Height="315" IsReadOnly="True" TextWrapping="Wrap"
-                     VerticalScrollBarVisibility="Auto"/>
-        </GroupBox>
+        <Grid Grid.Column="1" Grid.Row="2" Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+
+            <GroupBox Header="{x:Static resx:Strings.LogHeader}" Grid.Row="0" Margin="0,0,0,5">
+                <TextBox Text="{Binding LogText, Mode=OneWay}" 
+                         IsReadOnly="True" 
+                         TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto"/>
+            </GroupBox>
+
+            <GroupBox Header="{x:Static resx:Strings.StatsHeader}" Grid.Row="1" Margin="0,0,0,5">
+                <Border Padding="5" Background="#FFF" BorderThickness="0">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  MaxHeight="200">
+                        <TextBlock Text="{Binding Stats}"
+                                   TextWrapping="Wrap"
+                                   FontFamily="Consolas"
+                                   FontSize="13"/>
+                    </ScrollViewer>
+                </Border>
+            </GroupBox>
+        </Grid>
     </Grid>
 </Window>

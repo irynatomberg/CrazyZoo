@@ -10,11 +10,11 @@ namespace CrazyZoo.entity
     public class Dog : Animal, ICrazyAction
     {
         public override string MakeSound() => "Auh!";
-        public void ActCrazy()
+
+        public string ActCrazy()
         {
             string sound = string.Join(" ", Enumerable.Repeat("Auh!", 5));
-            LogAction($"{Name} haukus: {sound}");
+            return $"{Name} haukus hullumeelselt: {sound}";
         }
-        private void LogAction(string msg) => MainWindow.Log(msg);
     }
 }

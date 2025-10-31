@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace CrazyZoo.entity
 {
     public abstract class Animal
-    {
+    {   
         public required string Name { get; set; }
         public required int Age { get; set; }
 

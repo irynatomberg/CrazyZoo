@@ -12,16 +12,16 @@ namespace CrazyZoo.entity
         public bool IsFlying { get; private set; }
 
         public override string MakeSound() => "Tširp!";
+
         public void Fly()
         {
             IsFlying = !IsFlying;
-            LogAction($"{Name} {(IsFlying ? "lendab" : "ei lenda")}!");
         }
-        public void ActCrazy()
+
+        public string ActCrazy()
         {
             Fly();
-            LogAction($"{Name} karjus: CHIRP!!!");
+            return $"{Name} {(IsFlying ? "lendas hullult ringi ja karjus: CHIRP!!!" : "lendas vastu puud! 😅")}";
         }
-        private void LogAction(string msg) => MainWindow.Log(msg);
     }
 }

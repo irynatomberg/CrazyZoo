@@ -8,6 +8,6 @@ namespace CrazyZoo.interfaces
 {
     public interface ICrazyAction
     {
-        void ActCrazy();
+        string ActCrazy();
     }
 }

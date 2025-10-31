@@ -7,9 +7,9 @@ namespace CrazyZoo.entity
     {
         public override string MakeSound() => "Ring-ding-ding!";
 
-        public void ActCrazy()
+        public string ActCrazy()
         {
-            Console.WriteLine($"{Name} peitis kellegi toidu ära!");
+            return $"{Name} peitis kellegi toidu ära! 🦊";
         }
     }
 }
