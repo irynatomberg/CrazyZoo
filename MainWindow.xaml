@@ -46,7 +46,7 @@
                         <TextBlock Text="{x:Static resx:Strings.Species}"/>
                         <ComboBox ItemsSource="{Binding Source={StaticResource AnimalTypes}}"
                                   SelectedValue="{Binding NewType, Mode=TwoWay}"
-                                  Width="150"/>
+                        />
 
 
                         <TextBlock Text="{x:Static resx:Strings.Name}"/>
