@@ -109,12 +109,15 @@ namespace CrazyZoo.viewmodels
         {
             var start = new Animal[]
             {
-                new Cat { Name="Muri",   Age=3 },
-                new Dog { Name="Pontu",  Age=5 },
-                new Bird{ Name="Tibu",   Age=1 },
-                new Monkey{ Name="Tark", Age=4 },
-                new Fox { Name="Kaval", Age=2 },
-                new Horse{ Name="Torm",  Age=6 }
+                new Cat { Name = "Muri", Age = 3 },
+                new Dog { Name = "Pontu", Age = 5 },
+                new Bird { Name = "Tibu", Age = 1 },
+                new Monkey { Name = "Tark", Age = 4 },
+                new Fox { Name = "Kaval", Age = 2 },
+                new Horse { Name = "Torm", Age = 6 },
+                new Elephant { Name = "Suur", Age = 8 },
+                new Wolf { Name = "Hall", Age = 5 },
+                new Tiger { Name = "Triibu", Age = 7 }
             };
 
             foreach (var a in start)
@@ -143,6 +146,9 @@ namespace CrazyZoo.viewmodels
                 AnimalType.Hobune => new Horse { Name = name, Age = age },
                 AnimalType.Ahv => new Monkey { Name = name, Age = age },
                 AnimalType.Rebane => new Fox { Name = name, Age = age },
+                AnimalType.Elevant => new Elephant { Name = name, Age = age },
+                AnimalType.Hunt => new Wolf { Name = name, Age = age },
+                AnimalType.Tiiger => new Tiger { Name = name, Age = age },
                 _ => new Cat { Name = name, Age = age }
             };
 
@@ -191,7 +197,8 @@ namespace CrazyZoo.viewmodels
                 Log(Strings.NoCrazyAction);
         }
 
-        private string FoodOrDefault() => string.IsNullOrWhiteSpace(Food) ? Strings.DefaultFood : Food;
+        private string FoodOrDefault() =>
+            string.IsNullOrWhiteSpace(Food) ? Strings.DefaultFood : Food;
 
         private void Log(string msg)
         {
@@ -227,8 +234,9 @@ namespace CrazyZoo.viewmodels
                 : "";
 
             var avgAll = all.Average(a => a.Age);
+
             Stats = string.Join("\n", byType) +
-                    (oldestStr == "" ? "" : $"\n{oldestStr}") +
+                    (string.IsNullOrEmpty(oldestStr) ? "" : $"\n{oldestStr}") +
                     $"\n" + string.Format(Strings.AvgAgeTotal, avgAll);
         }
     }

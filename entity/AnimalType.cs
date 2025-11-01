@@ -7,6 +7,9 @@
         Lind,
         Hobune,
         Ahv,
-        Rebane
+        Rebane,
+        Elevant,
+        Hunt,
+        Tiiger
     }
 }
