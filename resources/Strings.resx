@@ -150,6 +150,12 @@
   <data name="CrazyButton" xml:space="preserve">
     <value>Hullu tegu</value>
   </data>
+  <data name="DatabaseLoaded" xml:space="preserve">
+    <value>Laaditud {0} looma andmebaasist.</value>
+  </data>
+  <data name="DatabaseSeeded" xml:space="preserve">
+    <value>Andmebaas oli tühi — lisatud algsed loomad.</value>
+  </data>
   <data name="DefaultFood" xml:space="preserve">
     <value>toit</value>
   </data>
@@ -173,6 +179,9 @@
   </data>
   <data name="FoodDropped" xml:space="preserve">
     <value>Toit kukkus voljeeri 🍎</value>
+  </data>
+  <data name="InitialAnimalsCreated" xml:space="preserve">
+    <value>Loodud ja salvestatud algsed loomad.</value>
   </data>
   <data name="InvalidAge" xml:space="preserve">
     <value>Vanus peab olema ≥ 0</value>

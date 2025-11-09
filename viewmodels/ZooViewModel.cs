@@ -118,7 +118,7 @@ namespace CrazyZoo.viewmodels
             if (allAnimals.Count == 0)
             {
                 Seed();
-                Log("Andmebaas oli tühi — lisatud algsed loomad.");
+                Log(Strings.DatabaseSeeded);
                 return;
             }
 
@@ -128,7 +128,7 @@ namespace CrazyZoo.viewmodels
                 _enclosure.Add(a);
             }
 
-            Log($"Laaditud {allAnimals.Count} looma andmebaasist.");
+            Log(string.Format(Strings.DatabaseLoaded, allAnimals.Count));
         }
 
         private void Seed()
@@ -153,14 +153,14 @@ namespace CrazyZoo.viewmodels
                 _enclosure.Add(a);
             }
 
-            Log("Loodud ja salvestatud algsed loomad.");
+            Log(Strings.InitialAnimalsCreated);
         }
 
         private void AddAnimal()
         {
             if (!int.TryParse(NewAge, out var age) || age < 0)
             {
-                Log("Vale vanus — sisesta positiivne number.");
+                Log(Strings.InvalidAge);
                 return;
             }
 
@@ -183,7 +183,7 @@ namespace CrazyZoo.viewmodels
             _repo.Add(a);
             Animals.Add(a);
             _enclosure.Add(a);
-            Log($"Lisatud uus loom: {a.Name}");
+            Log(string.Format(Strings.AnimalAdded, a.Name));
 
             NewName = NewAge = "";
             OnPropertyChanged(nameof(NewName));
@@ -199,7 +199,7 @@ namespace CrazyZoo.viewmodels
 
             _repo.Remove(removed);
             Animals.Remove(removed);
-            Log($"Eemaldatud: {removed.Name}");
+            Log(string.Format(Strings.AnimalRemoved, removed.Name));
 
             Selected = null;
             RebuildStats();
@@ -214,7 +214,7 @@ namespace CrazyZoo.viewmodels
         private void FeedSelected()
         {
             if (Selected == null || string.IsNullOrWhiteSpace(Food)) return;
-            Log($"{Selected.Name} sõi: {Food}");
+            Log(string.Format(Strings.AteFood, Selected.Name, Food));
         }
 
         private void CrazyAction()
@@ -222,7 +222,7 @@ namespace CrazyZoo.viewmodels
             if (Selected is ICrazyAction crazy)
                 Log(crazy.ActCrazy());
             else
-                Log("See loom ei tee midagi pöörast.");
+                Log(Strings.NoCrazyAction);
         }
 
         private string FoodOrDefault() =>
@@ -250,24 +250,24 @@ namespace CrazyZoo.viewmodels
             var all = Animals.ToList();
             if (all.Count == 0)
             {
-                Stats = "Loomi pole lisatud.";
+                Stats = Strings.NoAnimals;
                 return;
             }
 
             var byType = all
                 .GroupBy(a => a.GetType().Name)
-                .Select(g => $"{g.Key}: {g.Count()} tk (keskmine vanus {g.Average(x => x.Age):0.0})");
+                .Select(g => $"{g.Key}: {g.Count()} tk (avg {g.Average(x => x.Age):0.0})");
 
             var oldest = all.OrderByDescending(a => a.Age).FirstOrDefault();
             var oldestStr = oldest != null
-                ? $"{oldest.Name} on vanim ({oldest.GetType().Name}, {oldest.Age} a)."
+                ? string.Format(Strings.OldestAnimal, oldest.Name, oldest.GetType().Name, oldest.Age)
                 : "";
 
             var avgAll = all.Average(a => a.Age);
 
             Stats = string.Join("\n", byType) +
                     (string.IsNullOrEmpty(oldestStr) ? "" : $"\n{oldestStr}") +
-                    $"\nKeskmine vanus kokku: {avgAll:0.0}";
+                    $"\n" + string.Format(Strings.AvgAgeTotal, avgAll);
         }
     }
 }

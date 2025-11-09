@@ -160,6 +160,24 @@ namespace CrazyZoo.resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Laaditud {0} looma andmebaasist..
+        /// </summary>
+        public static string DatabaseLoaded {
+            get {
+                return ResourceManager.GetString("DatabaseLoaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Andmebaas oli tühi — lisatud algsed loomad..
+        /// </summary>
+        public static string DatabaseSeeded {
+            get {
+                return ResourceManager.GetString("DatabaseSeeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to toit.
         /// </summary>
         public static string DefaultFood {
@@ -228,6 +246,15 @@ namespace CrazyZoo.resources {
         public static string FoodDropped {
             get {
                 return ResourceManager.GetString("FoodDropped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loodud ja salvestatud algsed loomad..
+        /// </summary>
+        public static string InitialAnimalsCreated {
+            get {
+                return ResourceManager.GetString("InitialAnimalsCreated", resourceCulture);
             }
         }
         
