@@ -3,7 +3,9 @@ using CrazyZoo.entity;
 using CrazyZoo.infrastructure;
 using CrazyZoo.interfaces;
 using CrazyZoo.repositories;
+using CrazyZoo.logging;
 using CrazyZoo.resources;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -14,7 +16,8 @@ namespace CrazyZoo.viewmodels
 {
     public class ZooViewModel : BaseViewModel
     {
-        private readonly IRepository<Animal> _repo = new InMemoryRepository<Animal>();
+        private readonly IRepository<Animal> _repo;
+        private readonly ILogger _logger;
         private readonly Enclosure<Animal> _enclosure = new(Strings.EnclosureName);
         private readonly System.Timers.Timer _nightTimer = new(10000);
 
@@ -84,12 +87,15 @@ namespace CrazyZoo.viewmodels
 
         public ZooViewModel()
         {
+            _repo = App.Services.GetRequiredService<IRepository<Animal>>();
+            _logger = App.Services.GetRequiredService<ILogger>();
+
             _enclosure.AnimalJoinedInSameEnclosure += (_, e) =>
                 Log(string.Format(Strings.AnimalJoined, e.Animal.Name));
             _enclosure.FoodDropped += (_, __) => Log(Strings.FoodDropped);
             _enclosure.NightEvent += (_, __) => Log(Strings.NightEvent);
 
-            Seed();
+            LoadFromDatabase();
 
             AddAnimalCommand = new RelayCommand(_ => AddAnimal());
             RemoveSelectedCommand = new RelayCommand(_ => RemoveSelected(), _ => Selected != null);
@@ -103,6 +109,26 @@ namespace CrazyZoo.viewmodels
             _nightTimer.Start();
 
             RebuildStats();
+        }
+
+        private void LoadFromDatabase()
+        {
+            var allAnimals = _repo.GetAll().ToList();
+
+            if (allAnimals.Count == 0)
+            {
+                Seed();
+                Log("Andmebaas oli tühi — lisatud algsed loomad.");
+                return;
+            }
+
+            foreach (var a in allAnimals)
+            {
+                Animals.Add(a);
+                _enclosure.Add(a);
+            }
+
+            Log($"Laaditud {allAnimals.Count} looma andmebaasist.");
         }
 
         private void Seed()
@@ -126,13 +152,15 @@ namespace CrazyZoo.viewmodels
                 Animals.Add(a);
                 _enclosure.Add(a);
             }
+
+            Log("Loodud ja salvestatud algsed loomad.");
         }
 
         private void AddAnimal()
         {
             if (!int.TryParse(NewAge, out var age) || age < 0)
             {
-                Log(Strings.InvalidAge);
+                Log("Vale vanus — sisesta positiivne number.");
                 return;
             }
 
@@ -155,7 +183,7 @@ namespace CrazyZoo.viewmodels
             _repo.Add(a);
             Animals.Add(a);
             _enclosure.Add(a);
-            Log(string.Format(Strings.AnimalAdded, a.Name));
+            Log($"Lisatud uus loom: {a.Name}");
 
             NewName = NewAge = "";
             OnPropertyChanged(nameof(NewName));
@@ -171,7 +199,7 @@ namespace CrazyZoo.viewmodels
 
             _repo.Remove(removed);
             Animals.Remove(removed);
-            Log(string.Format(Strings.AnimalRemoved, removed.Name));
+            Log($"Eemaldatud: {removed.Name}");
 
             Selected = null;
             RebuildStats();
@@ -186,7 +214,7 @@ namespace CrazyZoo.viewmodels
         private void FeedSelected()
         {
             if (Selected == null || string.IsNullOrWhiteSpace(Food)) return;
-            Log(string.Format(Strings.AteFood, Selected.Name, Food));
+            Log($"{Selected.Name} sõi: {Food}");
         }
 
         private void CrazyAction()
@@ -194,7 +222,7 @@ namespace CrazyZoo.viewmodels
             if (Selected is ICrazyAction crazy)
                 Log(crazy.ActCrazy());
             else
-                Log(Strings.NoCrazyAction);
+                Log("See loom ei tee midagi pöörast.");
         }
 
         private string FoodOrDefault() =>
@@ -203,7 +231,9 @@ namespace CrazyZoo.viewmodels
         private void Log(string msg)
         {
             string timestamp = DateTime.Now.ToString("HH:mm:ss");
-            _log.Insert(0, $"[{timestamp}] {msg}{Environment.NewLine}");
+            string full = $"[{timestamp}] {msg}{Environment.NewLine}";
+            _logger.Log(msg);
+            _log.Insert(0, full);
             OnPropertyChanged(nameof(LogText));
         }
 
@@ -220,24 +250,24 @@ namespace CrazyZoo.viewmodels
             var all = Animals.ToList();
             if (all.Count == 0)
             {
-                Stats = Strings.NoAnimals;
+                Stats = "Loomi pole lisatud.";
                 return;
             }
 
             var byType = all
                 .GroupBy(a => a.GetType().Name)
-                .Select(g => $"{g.Key}: {g.Count()} tk (avg {g.Average(x => x.Age):0.0})");
+                .Select(g => $"{g.Key}: {g.Count()} tk (keskmine vanus {g.Average(x => x.Age):0.0})");
 
             var oldest = all.OrderByDescending(a => a.Age).FirstOrDefault();
             var oldestStr = oldest != null
-                ? string.Format(Strings.OldestAnimal, oldest.Name, oldest.GetType().Name, oldest.Age)
+                ? $"{oldest.Name} on vanim ({oldest.GetType().Name}, {oldest.Age} a)."
                 : "";
 
             var avgAll = all.Average(a => a.Age);
 
             Stats = string.Join("\n", byType) +
                     (string.IsNullOrEmpty(oldestStr) ? "" : $"\n{oldestStr}") +
-                    $"\n" + string.Format(Strings.AvgAgeTotal, avgAll);
+                    $"\nKeskmine vanus kokku: {avgAll:0.0}";
         }
     }
 }
