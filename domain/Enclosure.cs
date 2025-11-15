@@ -1,4 +1,4 @@
-﻿using CrazyZoo.entity;
+﻿using CrazyZoo.domain.entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,7 +1,8 @@
-﻿using CrazyZoo.entity;
-using CrazyZoo.interfaces;
-using CrazyZoo.logging;
-using CrazyZoo.repositories;
+﻿using CrazyZoo.application.interfaces;
+using CrazyZoo.domain.entity;
+using CrazyZoo.infrastructure.database;
+using CrazyZoo.infrastructure.logging;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Windows;
@@ -14,17 +15,15 @@ namespace CrazyZoo
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            base.OnStartup(e);
+            var sc = new ServiceCollection();
 
-            var services = new ServiceCollection();
+            sc.AddDbContext<ZooDbContext>(opt =>
+                opt.UseSqlite("Data Source=zoo.db"));
 
-            string dbPath = "crazyzoo.db";
+            sc.AddSingleton<ILogger, XmlLogger>();
+            sc.AddScoped<IRepository<Animal>, EfAnimalRepository>();
 
-            services.AddSingleton<ILogger, JsonLogger>();
-
-            services.AddSingleton<IRepository<Animal>>(sp => new DatabaseRepository(dbPath));
-
-            Services = services.BuildServiceProvider();
+            Services = sc.BuildServiceProvider();
         }
     }
 }
